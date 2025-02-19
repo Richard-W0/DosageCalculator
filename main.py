@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 def halfTime(t, dose, ht):
-    return dose * math.exp(math.pow(ht, -1) * (math.log(0.5)) * t)
+    return dose * math.exp(math.pow(ht, -1) * (- math.log(2)) * t)
 
 def getTime(dose, time, ht, outputLabel):
     for i in range(10000):
