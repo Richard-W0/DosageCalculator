@@ -6,18 +6,30 @@ from tkinter import messagebox
 def halfTime(t, dose, ht):
     return dose * math.exp(math.pow(ht, -1) * (- math.log(2)) * t)
 
-def getTime(dose, time, ht, outputLabel):
-    for i in range(10000):
-        x = halfTime(i/60, dose, ht)
-        if x < 1:
-            change = dt.timedelta(minutes=i)
-            newTime = time + change
-            if newTime.strftime("%d") != time.strftime("%d"):
-                result = f"Under 1mg: Tomorrow at {newTime.strftime('%H:%M')}"
-            else:
-                result = f"Under 1mg: {newTime.strftime('%H:%M')}"
-            outputLabel.config(text=result)
-            break
+def getTimeFaster(dose, time, ht, outputlabel):
+    hour = ht * - math.log(1 / dose, 2)
+    change = dt.timedelta(minutes = (hour * 60) + 1)
+    newTime = time + change
+    if newTime.strftime("%d") != time.strftime("%d"):
+        result = f"Under 1mg: Tomorrow at {newTime.strftime('%H:%M')}"
+    else:
+        result = f"Under 1mg: {newTime.strftime('%H:%M')}"
+    outputLabel.config(text=result)
+
+# the first implementation (very slow)
+#
+# def getTime(dose, time, ht, outputLabel):
+#     for i in range(10000):
+#         x = halfTime(i/60, dose, ht)
+#         if x < 1:
+#             change = dt.timedelta(minutes=i)
+#             newTime = time + change
+#             if newTime.strftime("%d") != time.strftime("%d"):
+#                 result = f"Under 1mg: Tomorrow at {newTime.strftime('%H:%M')}"
+#             else:
+#                 result = f"Under 1mg: {newTime.strftime('%H:%M')}"
+#             outputLabel.config(text=result)
+#             break
 
 def printTime(time, dose, ht, textWidget):
     textWidget.delete('1.0', tk.END)
@@ -35,13 +47,13 @@ def runCalculation():
         
         if choice == "Now":
             atm = dt.datetime.now()
-            getTime(dose, atm, half, outputLabel)
+            getTimeFaster(dose, atm, half, outputLabel)
             if chartVar.get():
                 printTime(atm, dose, half, chartText)
         elif choice == "Earlier":
             time = timeEntry.get()
             taken = dt.datetime.strptime(time, "%H:%M")
-            getTime(dose, taken, half, outputLabel)
+            getTimeFaster(dose, taken, half, outputLabel)
             if chartVar.get():
                 printTime(taken, dose, half, chartText)
     except ValueError:
